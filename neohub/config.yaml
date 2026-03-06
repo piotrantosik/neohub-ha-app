@@ -1,0 +1,27 @@
+---
+name: NeoHub
+version: "0.0.1"
+slug: neohub
+description: "DSC PowerSeries Neo alarm panel management via ITv2/TLink protocol"
+url: "https://github.com/BrianHumlicek/NeoHub"
+arch:
+  - amd64
+  - aarch64
+startup: application
+boot: auto
+init: false
+ingress: true
+ingress_port: 8080
+panel_icon: "mdi:shield-home"
+panel_title: NeoHub
+webui: "http://[HOST]:[PORT:8080]/"
+watchdog: "http://[HOST]:[PORT:8080]/"
+host_network: false
+ports:
+  3072/tcp: 3072
+ports_description:
+  3072/tcp: "DSC Panel ITv2 connection"
+map:
+  - addon_config:rw
+options: {}
+schema: {}
