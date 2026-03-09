@@ -1,7 +1,4 @@
 ---
-# build_from:
-#   amd64: "ghcr.io/brianhumlicek/neohub:latest"
-#   aarch64: "ghcr.io/brianhumlicek/neohub:latest"
-build_from:
-  amd64: "ghcr.io/piotrantosik/neohub:sha-dc191bf"
-  aarch64: "ghcr.io/piotrantosik/neohub:sha-dc191bf"
+ build_from:
+   amd64: "ghcr.io/brianhumlicek/neohub:sha-b089d6d"
+   aarch64: "ghcr.io/brianhumlicek/neohub:sha-b089d6d"
