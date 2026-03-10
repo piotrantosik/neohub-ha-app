@@ -1,4 +1,6 @@
 ---
- build_from:
-   amd64: "ghcr.io/brianhumlicek/neohub:sha-b089d6d"
-   aarch64: "ghcr.io/brianhumlicek/neohub:sha-b089d6d"
+build_from:
+   amd64: "ghcr.io/home-assistant/amd64-base-debian:latest"
+   aarch64: "ghcr.io/home-assistant/aarch64-base-debian:latest"
+args:
+   NEOHUB_IMAGE: "ghcr.io/brianhumlicek/neohub:sha-b5e2b56"

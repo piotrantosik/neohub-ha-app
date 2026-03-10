@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Registering NeoHub discovery..."
+
+CONFIG=$(jq -cn --arg host "$(hostname)" \
+  '{"host":$host,"port":8080}')
+bashio::discovery "neohub" "${CONFIG}"
+
+bashio::log.info "Discovery registered"
+
+bashio::log.info "Starting NeoHub..."
+
+cd /app || bashio::exit.nok "Failed to change to /app directory"
+exec dotnet /app/NeoHub.dll

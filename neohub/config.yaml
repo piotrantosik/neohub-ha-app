@@ -1,6 +1,6 @@
 ---
 name: NeoHub
-version: "0.0.2"
+version: "0.0.3"
 slug: neohub
 description: "DSC PowerSeries Neo alarm panel management via ITv2/TLink protocol"
 url: "https://github.com/BrianHumlicek/NeoHub"
@@ -17,6 +17,8 @@ panel_title: NeoHub
 webui: "http://[HOST]:[PORT:8080]/"
 watchdog: "http://[HOST]:[PORT:8080]/"
 host_network: false
+discovery:
+  - neohub
 ports:
   3072/tcp: 3072
   8080/tcp: 8080
