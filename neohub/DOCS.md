@@ -5,4 +5,5 @@ via the ITv2 (TLink) protocol.
 
 ## Support
 
-- [GitHub Issues](https://github.com/BrianHumlicek/NeoHub/issues)
+- [HA App Issues](https://github.com/piotrantosik/neohub-ha-app/issues)
+- [NeoHub Issues](https://github.com/BrianHumlicek/NeoHub/issues)
