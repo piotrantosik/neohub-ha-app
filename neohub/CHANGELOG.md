@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.4
+
+- Update NeoHub https://github.com/BrianHumlicek/NeoHub/compare/b5e2b56..c4fb28a
+
 ## 0.0.3
 
 - Use Home Assistant Base Images
