@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.5
+
+- Update NeoHub https://github.com/BrianHumlicek/NeoHub/compare/c4fb28a..4604126 - Installer configuration
+
 ## 0.0.4
 
 - Update NeoHub https://github.com/BrianHumlicek/NeoHub/compare/b5e2b56..c4fb28a
