@@ -62,6 +62,21 @@ jobs:
           sed -i "s|version: \"$CURRENT_VERSION\"|version: \"$NEW_VERSION\"|" neohub/config.yaml
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Update CHANGELOG.md
+        if: steps.check.outputs.update == 'true'
+        run: |
+          OLD_SHA="${{ steps.current.outputs.tag }}"
+          OLD_SHA="${OLD_SHA#sha-}"
+          NEW_SHA="${{ steps.latest.outputs.tag }}"
+          NEW_SHA="${NEW_SHA#sha-}"
+          COMPARE_URL="https://github.com/BrianHumlicek/NeoHub/compare/${OLD_SHA}..${NEW_SHA}"
+          {
+            head -n 2 neohub/CHANGELOG.md
+            printf '## %s\n\n- Update NeoHub %s\n\n' "${{ steps.version.outputs.new_version }}" "$COMPARE_URL"
+            tail -n +3 neohub/CHANGELOG.md
+          } > neohub/CHANGELOG.md.tmp
+          mv neohub/CHANGELOG.md.tmp neohub/CHANGELOG.md
+
       - name: Create Pull Request
         if: steps.check.outputs.update == 'true'
         uses: peter-evans/create-pull-request@v7
@@ -74,6 +89,7 @@ jobs:
             - Previous image: `${{ steps.current.outputs.tag }}`
             - New image: `${{ steps.latest.outputs.tag }}`
             - Addon version: `${{ steps.version.outputs.new_version }}`
+            - `CHANGELOG.md` updated
 
             [View changes on upstream](https://github.com/BrianHumlicek/NeoHub/commits/master)
           branch: auto-update/neohub-image
