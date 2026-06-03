@@ -1,0 +1,80 @@
+name: Update NeoHub Image
+
+on:
+  schedule:
+    - cron: "0 8 * * *"  # Daily at 8:00 UTC
+  workflow_dispatch:
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current image tag
+        id: current
+        run: |
+          CURRENT=$(grep -oP 'sha-[a-f0-9]+' neohub/build.yaml)
+          echo "tag=$CURRENT" >> "$GITHUB_OUTPUT"
+
+      - name: Get latest image tag from GHCR
+        id: latest
+        run: |
+          TAG=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            /users/brianhumlicek/packages/container/neohub/versions \
+            --paginate \
+            --jq '.[].metadata.container.tags[]' \
+            | grep '^sha-' \
+            | head -1)
+          if [ -z "$TAG" ]; then
+            echo "No sha-* tag found in GHCR package versions" >&2
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if update needed
+        id: check
+        run: |
+          if [ "${{ steps.current.outputs.tag }}" != "${{ steps.latest.outputs.tag }}" ]; then
+            echo "update=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "update=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update build.yaml
+        if: steps.check.outputs.update == 'true'
+        run: |
+          sed -i "s|${{ steps.current.outputs.tag }}|${{ steps.latest.outputs.tag }}|" neohub/build.yaml
+
+      - name: Bump addon version
+        id: version
+        if: steps.check.outputs.update == 'true'
+        run: |
+          CURRENT_VERSION=$(grep -oP '(?<=version: ")[^"]+' neohub/config.yaml)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          sed -i "s|version: \"$CURRENT_VERSION\"|version: \"$NEW_VERSION\"|" neohub/config.yaml
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        if: steps.check.outputs.update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "Update NeoHub image to ${{ steps.latest.outputs.tag }} (v${{ steps.version.outputs.new_version }})"
+          title: "Update NeoHub image to ${{ steps.latest.outputs.tag }} (v${{ steps.version.outputs.new_version }})"
+          body: |
+            Automated update of NeoHub container image.
+
+            - Previous image: `${{ steps.current.outputs.tag }}`
+            - New image: `${{ steps.latest.outputs.tag }}`
+            - Addon version: `${{ steps.version.outputs.new_version }}`
+
+            [View changes on upstream](https://github.com/BrianHumlicek/NeoHub/commits/master)
+          branch: auto-update/neohub-image
+          labels: dependencies
